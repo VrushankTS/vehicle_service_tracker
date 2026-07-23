@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  bike_model_id: 1
+  service_type_id: 1
+  interval_km: 1
+  interval_months: 1
+
+two:
+  bike_model_id: 1
+  service_type_id: 1
+  interval_km: 1
+  interval_months: 1

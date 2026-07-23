@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  vehicle_id: 1
+  service_type_id: 1
+  alert_type: MyString
+  due_date: 2026-07-22
+  due_odometer: 1
+  status: MyString
+  last_notified_stage: 1
+  sent_at: 2026-07-22 17:26:31
+
+two:
+  vehicle_id: 1
+  service_type_id: 1
+  alert_type: MyString
+  due_date: 2026-07-22
+  due_odometer: 1
+  status: MyString
+  last_notified_stage: 1
+  sent_at: 2026-07-22 17:26:31
