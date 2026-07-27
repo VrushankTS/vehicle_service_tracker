@@ -1,7 +1,7 @@
 class LoginService
     attr_reader :identifier, :password
 
-    def initialize(identifier:, password:)
+    def initialize(identifier: nil, password: nil)
         @identifier = identifier&.strip&.downcase
         @password = password
     end

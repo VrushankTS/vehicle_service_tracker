@@ -1,7 +1,7 @@
 class SignupService
     attr_reader :username, :email, :password, :phone
 
-    def initialize(username:, email:, password:, phone: nil)
+    def initialize(username: nil, email: nil, password: nil, phone: nil)
         @username = username&.strip&.downcase
         @email = email&.strip&.downcase
         @password = password

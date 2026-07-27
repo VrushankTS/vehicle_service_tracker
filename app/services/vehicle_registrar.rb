@@ -1,7 +1,7 @@
 class VehicleRegistrar
     attr_reader :model_id, :registration_number, :reading, :purchase_date, :registered_by
 
-    def initialize(model_id:, regn_no:, reading:, purchase_date:, registered_by:)
+    def initialize(model_id: nil, regn_no: nil, reading: nil, purchase_date: nil, registered_by: nil)
         @model_id = model_id
         @registration_number = regn_no
         @reading = reading
@@ -10,6 +10,9 @@ class VehicleRegistrar
     end
 
     def call
+        return ServiceResult.error("Registering user is required") if registered_by.nil?
+        return ServiceResult.error("Registering user doesn't exist") unless registered_by.is_a?(User) && registered_by.persisted?
+
         return ServiceResult.error("Bike model is required") if model_id.blank?
         bike_model = BikeModel.find_by(id: model_id)
         return ServiceResult.error("Unknown vehicle model") if bike_model.nil?
