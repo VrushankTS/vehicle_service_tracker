@@ -1,6 +1,6 @@
 class OdometerLogger
     MAX_KM_PER_HOUR = 100
-    MIN_ELAPSED_HOURS = 1.0 / 3600  # 1 second — prevents literal division-by-zero only, nothing more
+    MIN_ELAPSED_HOURS = 1.0 / 3600  # 1 second — prevents literal division-by-zero only
 
     attr_reader :registration_number, :reading, :confirmed, :logged_by
 
