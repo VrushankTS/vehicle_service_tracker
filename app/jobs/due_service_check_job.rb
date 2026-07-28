@@ -1,4 +1,4 @@
-class DueServiceCheckJob
+class DueServiceCheckJob < ApplicationJob
   queue_as :default
 
   def perform
