@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_27_093512) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_28_045902) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -42,6 +42,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_27_093512) do
   create_table "alerts", force: :cascade do |t|
     t.string "alert_type", null: false
     t.datetime "created_at", null: false
+    t.integer "dismissed_by_id"
     t.date "due_date"
     t.integer "due_odometer"
     t.integer "last_notified_stage", default: 0, null: false
@@ -50,6 +51,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_27_093512) do
     t.string "status", default: "pending", null: false
     t.datetime "updated_at", null: false
     t.integer "vehicle_id", null: false
+    t.index ["dismissed_by_id"], name: "index_alerts_on_dismissed_by_id"
     t.index ["service_type_id"], name: "index_alerts_on_service_type_id"
     t.index ["vehicle_id"], name: "index_alerts_on_vehicle_id"
   end
@@ -170,6 +172,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_27_093512) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "alerts", "service_types"
+  add_foreign_key "alerts", "users", column: "dismissed_by_id"
   add_foreign_key "alerts", "vehicles"
   add_foreign_key "invoice_items", "invoices"
   add_foreign_key "invoices", "service_records"
