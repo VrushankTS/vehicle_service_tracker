@@ -43,7 +43,8 @@ Validate dismissing user and alert
 | Alert not found | "Alert not found" |
 | Alert is not currently ```pending``` | "Alert is not in a pending state" |
 
-A dismissed or already-resolved alert cannot be dismissed again — the pending-state check is the same guard used by ```ServiceCompletionService``` before resolving an alert.
+A dismissed or already-resolved alert cannot be dismissed again — the pending-state check is the same guard used by ```ServiceCompletionService``` before resolving an alert. A dismissed alert is not recreated on the next check as long as the due target (`due_date` and `due_odometer`) is unchanged — dismissing an alert means "I am aware, do not repeat this," not "forget this ever happened." If the due target changes (because the linked service was eventually completed), the dismissal no longer applies; the next check starts a fresh alert cycle. If the due target stays the same but the calculated stage increases beyond the stage at which the alert was dismissed, the alert is reopened — its status returns to `pending` and a new notification is sent. A dismissal only suppresses the urgency level the person actually saw; it does not suppress further escalation.
+
 
 ### Result Data
 

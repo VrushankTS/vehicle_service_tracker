@@ -10,6 +10,7 @@ class Vehicle < ApplicationRecord
     validates :purchase_date, presence: true
     
     belongs_to :bike_model
+    belongs_to :vehicle_type
     has_many :odometer_logs, dependent: :destroy
     has_many :invoices, dependent: :restrict_with_error
     has_many :alerts, dependent: :destroy

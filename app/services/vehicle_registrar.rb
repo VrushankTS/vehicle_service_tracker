@@ -1,9 +1,10 @@
 class VehicleRegistrar
-    attr_reader :model_id, :registration_number, :reading, :purchase_date, :registered_by
+    attr_reader :model_id, :registration_number, :vehicle_type_id, :reading, :purchase_date, :registered_by
 
-    def initialize(model_id: nil, regn_no: nil, reading: nil, purchase_date: nil, registered_by: nil)
+    def initialize(model_id: nil, regn_no: nil, type_id: nil, reading: nil, purchase_date: nil, registered_by: nil)
         @model_id = model_id
         @registration_number = regn_no
+        @vehicle_type_id = type_id
         @reading = reading
         @purchase_date = purchase_date
         @registered_by = registered_by
@@ -16,6 +17,10 @@ class VehicleRegistrar
         return ServiceResult.error("Bike model is required") if model_id.blank?
         bike_model = BikeModel.find_by(id: model_id)
         return ServiceResult.error("Unknown vehicle model") if bike_model.nil?
+
+        return ServiceResult.error("Vehicle type is required") if vehicle_type_id.blank?
+        vehicle_type = VehicleType.find_by(id: vehicle_type_id)
+        return ServiceResult.error("Unknown vehicle type") if vehicle_type.nil?
 
         return ServiceResult.error("Vehicle registration number is required") if registration_number.blank?
         return ServiceResult.error("Odometer reading must be a valid non-negative integer") if reading.blank? || reading < 0
@@ -31,6 +36,7 @@ class VehicleRegistrar
         ActiveRecord::Base.transaction do
             vehicle = Vehicle.create(
                 bike_model: bike_model,
+                vehicle_type: vehicle_type,
                 registration_number: registration_number,
                 purchase_date: purchase_date
             )

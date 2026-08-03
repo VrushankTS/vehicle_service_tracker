@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_28_045902) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_31_101402) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -135,9 +135,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_28_045902) do
     t.integer "interval_months"
     t.integer "service_type_id", null: false
     t.datetime "updated_at", null: false
-    t.index ["bike_model_id", "service_type_id"], name: "index_service_schedules_on_bike_model_id_and_service_type_id", unique: true
+    t.integer "vehicle_type_id", null: false
     t.index ["bike_model_id"], name: "index_service_schedules_on_bike_model_id"
     t.index ["service_type_id"], name: "index_service_schedules_on_service_type_id"
+    t.index ["vehicle_type_id", "bike_model_id", "service_type_id"], name: "idx_on_vehicle_type_id_bike_model_id_service_type_i_46c6fb978b", unique: true
+    t.index ["vehicle_type_id"], name: "index_service_schedules_on_vehicle_type_id"
   end
 
   create_table "service_types", force: :cascade do |t|
@@ -159,14 +161,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_28_045902) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  create_table "vehicle_types", force: :cascade do |t|
+    t.string "code", null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_vehicle_types_on_code", unique: true
+    t.index ["name"], name: "index_vehicle_types_on_name", unique: true
+  end
+
   create_table "vehicles", force: :cascade do |t|
     t.integer "bike_model_id", null: false
     t.datetime "created_at", null: false
     t.date "purchase_date", null: false
     t.string "registration_number", null: false
     t.datetime "updated_at", null: false
+    t.integer "vehicle_type_id", null: false
     t.index ["bike_model_id"], name: "index_vehicles_on_bike_model_id"
     t.index ["registration_number"], name: "index_vehicles_on_registration_number", unique: true
+    t.index ["vehicle_type_id"], name: "index_vehicles_on_vehicle_type_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
@@ -188,5 +202,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_28_045902) do
   add_foreign_key "service_reports", "vehicles"
   add_foreign_key "service_schedules", "bike_models"
   add_foreign_key "service_schedules", "service_types"
+  add_foreign_key "service_schedules", "vehicle_types"
   add_foreign_key "vehicles", "bike_models"
+  add_foreign_key "vehicles", "vehicle_types"
 end
