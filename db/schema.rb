@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_31_101402) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_03_131630) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -62,6 +62,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_31_101402) do
     t.string "name", null: false
     t.datetime "updated_at", null: false
     t.index ["brand", "name"], name: "index_bike_models_on_brand_and_name", unique: true
+  end
+
+  create_table "general_service_milestones", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "interval_km", null: false
+    t.integer "interval_months", null: false
+    t.integer "sequence", null: false
+    t.integer "service_rule_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["service_rule_id", "sequence"], name: "idx_on_service_rule_id_sequence_a8f515ecd6", unique: true
+    t.index ["service_rule_id"], name: "index_general_service_milestones_on_service_rule_id"
   end
 
   create_table "invoice_items", force: :cascade do |t|
@@ -128,6 +139,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_31_101402) do
     t.index ["vehicle_id"], name: "index_service_reports_on_vehicle_id"
   end
 
+  create_table "service_rules", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.json "condition"
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.integer "priority", null: false
+    t.json "rule_config"
+    t.string "strategy_domain", null: false
+    t.string "strategy_key", null: false
+    t.datetime "updated_at", null: false
+    t.integer "vehicle_type_id", null: false
+    t.index ["vehicle_type_id", "strategy_domain"], name: "idx_one_fallback_per_type_domain_service_type", unique: true, where: "condition IS NULL"
+    t.index ["vehicle_type_id"], name: "index_service_rules_on_vehicle_type_id"
+  end
+
   create_table "service_schedules", force: :cascade do |t|
     t.integer "bike_model_id", null: false
     t.datetime "created_at", null: false
@@ -188,6 +214,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_31_101402) do
   add_foreign_key "alerts", "service_types"
   add_foreign_key "alerts", "users", column: "dismissed_by_id"
   add_foreign_key "alerts", "vehicles"
+  add_foreign_key "general_service_milestones", "service_rules"
   add_foreign_key "invoice_items", "invoices"
   add_foreign_key "invoices", "service_records"
   add_foreign_key "invoices", "users", column: "uploaded_by"
@@ -200,6 +227,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_31_101402) do
   add_foreign_key "service_reports", "service_records"
   add_foreign_key "service_reports", "users", column: "uploaded_by"
   add_foreign_key "service_reports", "vehicles"
+  add_foreign_key "service_rules", "vehicle_types"
   add_foreign_key "service_schedules", "bike_models"
   add_foreign_key "service_schedules", "service_types"
   add_foreign_key "service_schedules", "vehicle_types"

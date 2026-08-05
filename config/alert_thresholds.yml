@@ -1,0 +1,14 @@
+default: &default
+  date:
+    early_days: 15
+    close_days: 7
+
+  km:
+    early_percent: 0.10
+    close_percent: 0.03
+
+development:
+  <<: *default
+
+test:
+  <<: *default

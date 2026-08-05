@@ -4,4 +4,5 @@ class VehicleType < ApplicationRecord
 
   has_many :vehicles
   has_many :service_schedules
+  has_many :service_rules
 end

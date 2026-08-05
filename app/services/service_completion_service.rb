@@ -29,9 +29,6 @@ class ServiceCompletionService
 
     return ServiceResult.error("Odometer reading must be a valid non-negative number") if odometer_reading.blank? || odometer_reading < 0
 
-    service_schedule = ServiceSchedule.find_by(service_type_id: service_type.id, bike_model_id: vehicle.bike_model_id)
-    return ServiceResult.error("No service schedule defined for this vehicle model and service type") if service_schedule.nil?
-
     previous_log = vehicle.odometer_logs.order(recorded_at: :desc).first
 
     if previous_log.present? && !confirmed
@@ -66,8 +63,42 @@ class ServiceCompletionService
       return ServiceResult.error("Alert is not in a pending state") unless alert.status == 'pending'
     end
 
-    next_due_odometer = odometer_reading + service_schedule.interval_km
-    next_due_date = Date.current + service_schedule.interval_months.months
+    # --- Compute next due targets ---
+    due_target_rule = ServiceRuleResolver.new.call(vehicle: vehicle, service_type: service_type, domain: "due_target")
+    
+    next_due_odometer = nil
+    next_due_date = nil
+
+    if due_target_rule.strategy_key == 'general_milestone'
+      completed_count = vehicle.service_records.where(service_type_id: service_type.id).count
+      milestones = due_target_rule.general_service_milestones.order(sequence: :asc)
+
+      starting_log = vehicle.odometer_logs.order(recorded_at: :asc).first
+      next_milestone = milestones[completed_count+1]
+
+      unless next_milestone.nil?
+        next_due_odometer = starting_log.reading + next_milestone.interval_km
+        next_due_date = vehicle.purchase_date + next_milestone.interval_months.months
+      end
+
+    else
+      service_schedule = ServiceSchedule.find_by(
+        service_type_id: service_type.id, bike_model_id: vehicle.bike_model_id,
+        vehicle_type_id: vehicle.vehicle_type_id
+      )
+      return ServiceResult.error("No service schedule defined for this vehicle type, model and service type") if service_schedule.nil?
+
+      stage_rule = ServiceRuleResolver.new.call(vehicle: vehicle, service_type: service_type, domain: "stage")
+      config = stage_rule.rule_config
+      
+      effective_interval_km = config["interval_km"] || service_schedule.interval_km
+      effective_interval_months = config["interval_months"] || service_schedule.interval_months
+
+      next_due_odometer = odometer_reading + effective_interval_km
+      next_due_date = Date.current + effective_interval_months.months
+    end
+
+    next_due_date = nil if vehicle.vehicle_type == VehicleType.find_by(code: "MBS")
 
     service_record = nil
     error_message = nil
