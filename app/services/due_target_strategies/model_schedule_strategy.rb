@@ -1,7 +1,9 @@
 module DueTargetStrategies
   class ModelScheduleStrategy < BaseStrategy
 
-    def resolve(vehicle:, service_type:, schedule:)
+    def resolve(vehicle:, service_type:, schedule: nil)
+      return { due_km: nil, due_date: nil } if schedule.nil?
+
       last_service = vehicle.service_records
                     .where(service_type_id: service_type.id)
                     .order(created_at: :desc)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_03_131630) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_06_083742) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -200,6 +200,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_03_131630) do
   create_table "vehicles", force: :cascade do |t|
     t.integer "bike_model_id", null: false
     t.datetime "created_at", null: false
+    t.integer "odometer_reading", null: false
     t.date "purchase_date", null: false
     t.string "registration_number", null: false
     t.datetime "updated_at", null: false

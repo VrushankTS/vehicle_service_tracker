@@ -38,7 +38,8 @@ class VehicleRegistrar
                 bike_model: bike_model,
                 vehicle_type: vehicle_type,
                 registration_number: registration_number,
-                purchase_date: purchase_date
+                purchase_date: purchase_date,
+                odometer_reading: reading
             )
             unless vehicle.persisted?
                 error_message = vehicle.errors.full_messages.join(", ")

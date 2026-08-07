@@ -1,14 +1,15 @@
 class Vehicle < ApplicationRecord
     before_validation :normalize_registration_number
 
-    # validates :registration_number,
-    #             presence: true, uniqueness: true,
-    #             format: {
-    #                 with: /\A[A-Z]{2}\s?\d{2}\s?[A-Z]{1,2}\s?\d{4}\z/,
-    #                 message: "Must be in the format KA01AB1234 or KA 01 AB 1234"
-    #             }
+    validates :registration_number,
+                presence: true, uniqueness: true,
+                format: {
+                    with: /\A[A-Z]{2}\s?\d{2}\s?[A-Z]{1,2}\s?\d{4}\z/,
+                    message: "Must be in the format KA01AB1234 or KA 01 AB 1234"
+                }
     validates :registration_number, presence: true, uniqueness: true
     validates :purchase_date, presence: true
+    validates :odometer_reading, presence: true
     
     belongs_to :bike_model
     belongs_to :vehicle_type

@@ -44,9 +44,30 @@ class OdometerLogger
             end
         end
 
-        odometer_log = vehicle.odometer_logs.create(odometer_logger: logged_by, reading: reading, recorded_at: Time.current)
-        return ServiceResult.error(odometer_log.errors.full_messages.join(", ")) unless odometer_log.persisted?
+        odometer_log = nil
+        error_message = nil
 
-        ServiceResult.success(odometer_log)
+        ActiveRecord::Base.transaction do
+            odometer_log = vehicle.odometer_logs.create(
+                odometer_logger: logged_by, 
+                reading: reading, 
+                recorded_at: Time.current
+            )
+            unless odometer_log.persisted?
+                error_message = odometer_log.errors.full_messages.join(", ")
+                raise ActiveRecord::Rollback
+            end
+
+            unless vehicle.update(odometer_reading: reading)
+                error_message = vehicle.errors.full_messages.join(", ")
+                raise ActiveRecord::Rollback
+            end
+        end
+
+        if odometer_log&.persisted?
+            ServiceResult.success(odometer_log)
+        else
+            ServiceResult.error(error_message || "Could not complete the service")
+        end
     end
 end

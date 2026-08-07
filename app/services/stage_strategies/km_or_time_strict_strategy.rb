@@ -4,7 +4,7 @@ module StageStrategies
     def compute_stage(due_km:, current_km:, interval_km:, due_date:)
       effective_interval_km = config["interval_km"] || interval_km
 
-      km_stage = compute_km_stage(due_km, current_km, interval_km)
+      km_stage = compute_km_stage(due_km, current_km, effective_interval_km)
       date_stage = compute_date_stage(due_date)
 
       if date_stage > km_stage

@@ -46,7 +46,7 @@ Validate logging user, registration number, and odometer reading
       → Reject with a confirmation request if the new reading is lower
       → Reject with a confirmation request if the implied speed since the
         last entry exceeds the allowed maximum
-  → Create the OdometerLog entry
+  → Create the OdometerLog entry and update the Vehicle's odometer reading.
   → Return the created entry on success
 ```
 

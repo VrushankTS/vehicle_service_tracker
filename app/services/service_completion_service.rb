@@ -115,6 +115,11 @@ class ServiceCompletionService
         raise ActiveRecord::Rollback
       end
 
+      unless vehicle.update(odometer_reading: odometer_reading)
+        error_message = vehicle.errors.full_messages.join(", ")
+        raise ActiveRecord::Rollback
+      end
+
       service_record = ServiceRecord.create(
         vehicle: vehicle,
         service_type: service_type,
